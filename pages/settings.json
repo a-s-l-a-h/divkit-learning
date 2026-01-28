@@ -1,0 +1,169 @@
+{
+    "card": {
+        "log_id": "settings_screen",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "type": "container",
+                    "orientation": "vertical",
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "height": {
+                        "type": "match_parent"
+                    },
+                    "paddings": {
+                        "top": 40,
+                        "bottom": 40,
+                        "left": 20,
+                        "right": 20
+                    },
+                    "background": [
+                        {
+                            "type": "solid",
+                            "color": "#f0f8e8"
+                        }
+                    ],
+                    "items": [
+                        {
+                            "type": "text",
+                            "text": "⚙️ Settings",
+                            "font_size": 36,
+                            "font_weight": "bold",
+                            "text_color": "#333333",
+                            "margins": {
+                                "bottom": 10
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": "Configure your preferences",
+                            "font_size": 16,
+                            "text_color": "#666666",
+                            "margins": {
+                                "bottom": 30
+                            }
+                        },
+                        {
+                            "type": "container",
+                            "orientation": "vertical",
+                            "background": [
+                                {
+                                    "type": "solid",
+                                    "color": "#ffffff"
+                                }
+                            ],
+                            "border": {
+                                "corner_radius": 10
+                            },
+                            "paddings": {
+                                "top": 20,
+                                "bottom": 20,
+                                "left": 20,
+                                "right": 20
+                            },
+                            "margins": {
+                                "bottom": 30
+                            },
+                            "items": [
+                                {
+                                    "type": "text",
+                                    "text": "✓ Notifications: Enabled",
+                                    "font_size": 16,
+                                    "margins": {
+                                        "bottom": 10
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "✓ Dark Mode: Disabled",
+                                    "font_size": 16,
+                                    "margins": {
+                                        "bottom": 10
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "✓ Language: English",
+                                    "font_size": 16
+                                }
+                            ]
+                        },
+                        {
+                            "type": "container",
+                            "orientation": "vertical",
+                            "items": [
+                                {
+                                    "type": "text",
+                                    "text": "View Profile",
+                                    "font_size": 18,
+                                    "font_weight": "medium",
+                                    "text_color": "#ffffff",
+                                    "text_alignment_horizontal": "center",
+                                    "background": [
+                                        {
+                                            "type": "solid",
+                                            "color": "#007bff"
+                                        }
+                                    ],
+                                    "border": {
+                                        "corner_radius": 8
+                                    },
+                                    "paddings": {
+                                        "top": 15,
+                                        "bottom": 15,
+                                        "left": 30,
+                                        "right": 30
+                                    },
+                                    "margins": {
+                                        "bottom": 15
+                                    },
+                                    "actions": [
+                                        {
+                                            "log_id": "nav_profile",
+                                            "url": "app://navigate?page=profile"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "⬅ Back to Home",
+                                    "font_size": 18,
+                                    "font_weight": "medium",
+                                    "text_color": "#28a745",
+                                    "text_alignment_horizontal": "center",
+                                    "background": [
+                                        {
+                                            "type": "solid",
+                                            "color": "#ffffff"
+                                        }
+                                    ],
+                                    "border": {
+                                        "corner_radius": 8,
+                                        "stroke": {
+                                            "color": "#28a745",
+                                            "width": 2
+                                        }
+                                    },
+                                    "paddings": {
+                                        "top": 15,
+                                        "bottom": 15,
+                                        "left": 30,
+                                        "right": 30
+                                    },
+                                    "actions": [
+                                        {
+                                            "log_id": "nav_home",
+                                            "url": "app://navigate?page=home"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

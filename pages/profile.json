@@ -1,0 +1,36 @@
+{
+    "card": {
+        "log_id": "profile_screen",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "type": "container",
+                    "orientation": "vertical",
+                    "items": [
+                        {
+                            "type": "text",
+                            "text": "👤 Profile Page",
+                            "font_size": 30,
+                            "margins": { "bottom": 20 }
+                        },
+                        {
+                            "type": "text",
+                            "text": "⬅ Back to Home",
+                            "font_size": 18,
+                            "background": [{ "type": "solid", "color": "#333333" }],
+                            "text_color": "#ffffff",
+                            "paddings": { "top": 10, "bottom": 10, "left": 20, "right": 20 },
+                            "actions": [
+                                {
+                                    "log_id": "nav_home",
+                                    "url": "app://navigate?page=home"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
