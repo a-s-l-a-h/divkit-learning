@@ -1,10 +1,14 @@
 import '@divkitframework/divkit/dist/client.css';
-import { render } from '@divkitframework/divkit/dist/client';
+import { 
+    render, 
+    createVariable, 
+    createGlobalVariablesController 
+} from '@divkitframework/divkit/dist/client';
 
 import homeData from './pages/home.json';
 import profileData from './pages/profile.json';
 import settingsData from './pages/settings.json';
-import sharedVariables from './pages/variables.json';
+import variablesData from './pages/variables.json';
 
 const pages = {
     home: homeData,
@@ -12,46 +16,34 @@ const pages = {
     settings: settingsData
 };
 
-// THE MAGIC: Convert variables.json to DivKit format
-function convertVariablesToDivKitFormat(variablesObj) {
-    return Object.entries(variablesObj).map(([name, value]) => ({
-        name: name,
-        type: typeof value === 'number' ? 'integer' : 
-              typeof value === 'boolean' ? 'boolean' : 'string',
-        value: value
-    }));
-}
+// THE OFFICIAL DIVKIT WAY: Create global variables controller
+const globalController = createGlobalVariablesController();
 
-// THE KEY: Inject shared variables into page JSON
-function injectSharedVariables(pageJson, variables) {
-    const pageCopy = JSON.parse(JSON.stringify(pageJson));
-    
-    // Add variables to card level
-    pageCopy.card.variables = convertVariablesToDivKitFormat(variables);
-    
-    return pageCopy;
-}
+// Create variables from variables.json and add to controller
+Object.entries(variablesData).forEach(([name, value]) => {
+    const variable = createVariable(name, 'string', value);
+    globalController.setVariable(variable);
+});
 
 function loadPage(pageName) {
-    const pageTemplate = pages[pageName];
+    const jsonToRender = pages[pageName];
 
-    if (!pageTemplate) {
+    if (!jsonToRender) {
         console.error("Page not found:", pageName);
         return;
     }
-
-    // MAGIC HAPPENS: Inject current shared variables into page
-    const pageWithVariables = injectSharedVariables(pageTemplate, sharedVariables);
 
     // Clear container
     const container = document.getElementById('app');
     container.innerHTML = '';
 
-    // Render with injected variables
+    // Render with global variables controller
+    // ALL pages can now access the same variables!
     render({
         id: 'divkit-root',
         target: container,
-        json: pageWithVariables,
+        json: jsonToRender,
+        globalVariablesController: globalController,  // ← OFFICIAL DIVKIT WAY!
         
         onCustomAction: (action) => {
             try {
@@ -71,42 +63,24 @@ function loadPage(pageName) {
     });
 }
 
-// UPDATE SHARED VARIABLES - Changes reflect everywhere!
-function updateSharedVariable(variableName, newValue) {
-    console.log(`Updating ${variableName} to:`, newValue);
-    
-    // Update the shared source
-    sharedVariables[variableName] = newValue;
-    
-    // Re-render current page with updated variables
-    const currentPage = getCurrentPage();
-    if (currentPage) {
-        loadPage(currentPage);
+// UPDATE VARIABLES - The DivKit Way
+function updateGlobalVariable(name, value) {
+    const variable = globalController.getVariable(name);
+    if (variable) {
+        variable.setValue(value);
+        console.log(`✅ Updated ${name} to:`, value);
+        // All pages automatically see the new value!
     }
 }
 
-// Helper to track current page
-let currentPageName = 'home';
-function getCurrentPage() {
-    return currentPageName;
-}
-
-// Override loadPage to track current page
-const originalLoadPage = loadPage;
-loadPage = function(pageName) {
-    currentPageName = pageName;
-    originalLoadPage(pageName);
-};
-
 // EXAMPLE 1: Update user name
 function updateUserName(newName) {
-    updateSharedVariable('user_name', newName);
+    updateGlobalVariable('user_name', newName);
 }
 
-// EXAMPLE 2: Fetch and update from API
+// EXAMPLE 2: Fetch from API
 async function fetchAndUpdateUserData() {
     try {
-        // Simulate API call
         const response = await new Promise(resolve => {
             setTimeout(() => {
                 resolve({
@@ -118,60 +92,57 @@ async function fetchAndUpdateUserData() {
             }, 1000);
         });
         
-        console.log('Fetched user data:', response);
+        console.log('Fetched:', response);
         
-        // Update all variables
-        updateSharedVariable('user_name', response.name);
-        updateSharedVariable('user_email', response.email);
-        updateSharedVariable('membership_status', response.status);
-        updateSharedVariable('user_avatar', response.avatar);
+        updateGlobalVariable('user_name', response.name);
+        updateGlobalVariable('user_email', response.email);
+        updateGlobalVariable('membership_status', response.status);
+        updateGlobalVariable('user_avatar', response.avatar);
         
-        console.log('✅ All pages will now show: ' + response.name);
+        console.log('✅ All pages updated!');
         
     } catch (error) {
-        console.error('Failed to fetch:', error);
+        console.error('Failed:', error);
     }
 }
 
 // EXAMPLE 3: Toggle dark mode
 function toggleDarkMode() {
-    const current = sharedVariables.dark_mode_status;
-    const newValue = current === 'Enabled' ? 'Disabled' : 'Enabled';
-    updateSharedVariable('dark_mode_status', newValue);
+    const variable = globalController.getVariable('dark_mode_status');
+    if (variable) {
+        const current = variable.getValue();
+        const newValue = current === 'Enabled' ? 'Disabled' : 'Enabled';
+        variable.setValue(newValue);
+        console.log(`Dark mode: ${newValue}`);
+    }
 }
 
 // EXAMPLE 4: Toggle notifications
 function toggleNotifications() {
-    const current = sharedVariables.notification_status;
-    const newValue = current === 'Enabled' ? 'Disabled' : 'Enabled';
-    updateSharedVariable('notification_status', newValue);
+    const variable = globalController.getVariable('notification_status');
+    if (variable) {
+        const current = variable.getValue();
+        const newValue = current === 'Enabled' ? 'Disabled' : 'Enabled';
+        variable.setValue(newValue);
+        console.log(`Notifications: ${newValue}`);
+    }
 }
 
-// EXAMPLE 5: Batch update
-function updateMultipleVariables(updates) {
-    Object.entries(updates).forEach(([key, value]) => {
-        sharedVariables[key] = value;
-    });
-    
-    // Re-render once after all updates
-    loadPage(getCurrentPage());
-}
-
-// Export for console testing
-window.updateSharedVariable = updateSharedVariable;
+// Export for testing
+window.updateGlobalVariable = updateGlobalVariable;
 window.updateUserName = updateUserName;
 window.fetchAndUpdateUserData = fetchAndUpdateUserData;
 window.toggleDarkMode = toggleDarkMode;
 window.toggleNotifications = toggleNotifications;
-window.updateMultipleVariables = updateMultipleVariables;
-window.sharedVariables = sharedVariables; // View current values
+window.globalController = globalController;
 
-// Start app
+// Start
 loadPage('home');
 
-// Auto-demo: Update after 2 seconds
+// Demo: Auto-update after 2 seconds
 setTimeout(() => {
     console.log('🔄 Updating user name...');
     updateUserName('Jane Smith');
-    console.log('✅ Name updated! Switch pages to see it persists everywhere!');
+    console.log('✅ Check: name changed on current page!');
+    console.log('✅ Navigate to another page - same name will show!');
 }, 2000);
