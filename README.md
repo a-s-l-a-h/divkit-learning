@@ -111,14 +111,14 @@ variable.setValue('Jane');
 const controller = createGlobalVariablesController();
 controller.getVariable('user_name').setValue('Jane');
 ```
-### Future Reference
-## Android (Kotlin)
+## Future Reference
+### Android (Kotlin)
 ```kotlin
 val variableController = DivVariableController()
 variableController.putOrUpdate(Variable.StringVariable("user_name", "Jane"))
 ```
 
-## iOS (Swift)
+### iOS (Swift)
 ```swift
 let variableStorage = DivVariableStorage()
 variableStorage.set(variable: "user_name", value: "Jane")
