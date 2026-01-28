@@ -1,0 +1,11 @@
+{
+    "user_name": "John Doe",
+    "user_email": "john@example.com",
+    "user_avatar": "👤",
+    "membership_status": "Premium Member",
+    "member_since": "2024",
+    "notification_status": "Enabled",
+    "dark_mode_status": "Disabled",
+    "language": "English",
+    "app_version": "1.0.0"
+}

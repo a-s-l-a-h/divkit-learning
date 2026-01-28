@@ -7,24 +7,167 @@
                 "div": {
                     "type": "container",
                     "orientation": "vertical",
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "height": {
+                        "type": "match_parent"
+                    },
+                    "paddings": {
+                        "top": 40,
+                        "bottom": 40,
+                        "left": 20,
+                        "right": 20
+                    },
+                    "background": [
+                        {
+                            "type": "solid",
+                            "color": "#e8f4f8"
+                        }
+                    ],
                     "items": [
                         {
                             "type": "text",
-                            "text": "👤 Profile Page",
-                            "font_size": 30,
-                            "margins": { "bottom": 20 }
+                            "text": "@{user_avatar} Profile Page",
+                            "font_size": 36,
+                            "font_weight": "bold",
+                            "text_color": "#333333",
+                            "margins": {
+                                "bottom": 10
+                            }
                         },
                         {
                             "type": "text",
-                            "text": "⬅ Back to Home",
-                            "font_size": 18,
-                            "background": [{ "type": "solid", "color": "#333333" }],
-                            "text_color": "#ffffff",
-                            "paddings": { "top": 10, "bottom": 10, "left": 20, "right": 20 },
-                            "actions": [
+                            "text": "Your account information",
+                            "font_size": 16,
+                            "text_color": "#666666",
+                            "margins": {
+                                "bottom": 30
+                            }
+                        },
+                        {
+                            "type": "container",
+                            "orientation": "vertical",
+                            "background": [
                                 {
-                                    "log_id": "nav_home",
-                                    "url": "app://navigate?page=home"
+                                    "type": "solid",
+                                    "color": "#ffffff"
+                                }
+                            ],
+                            "border": {
+                                "corner_radius": 10
+                            },
+                            "paddings": {
+                                "top": 20,
+                                "bottom": 20,
+                                "left": 20,
+                                "right": 20
+                            },
+                            "margins": {
+                                "bottom": 30
+                            },
+                            "items": [
+                                {
+                                    "type": "text",
+                                    "text": "Name: @{user_name}",
+                                    "font_size": 16,
+                                    "margins": {
+                                        "bottom": 10
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "Email: @{user_email}",
+                                    "font_size": 16,
+                                    "margins": {
+                                        "bottom": 10
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "Status: @{membership_status}",
+                                    "font_size": 16,
+                                    "text_color": "#28a745",
+                                    "font_weight": "medium",
+                                    "margins": {
+                                        "bottom": 10
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "Member since: @{member_since}",
+                                    "font_size": 16
+                                }
+                            ]
+                        },
+                        {
+                            "type": "container",
+                            "orientation": "vertical",
+                            "items": [
+                                {
+                                    "type": "text",
+                                    "text": "Go to Settings",
+                                    "font_size": 18,
+                                    "font_weight": "medium",
+                                    "text_color": "#ffffff",
+                                    "text_alignment_horizontal": "center",
+                                    "background": [
+                                        {
+                                            "type": "solid",
+                                            "color": "#28a745"
+                                        }
+                                    ],
+                                    "border": {
+                                        "corner_radius": 8
+                                    },
+                                    "paddings": {
+                                        "top": 15,
+                                        "bottom": 15,
+                                        "left": 30,
+                                        "right": 30
+                                    },
+                                    "margins": {
+                                        "bottom": 15
+                                    },
+                                    "actions": [
+                                        {
+                                            "log_id": "nav_settings",
+                                            "url": "app://navigate?page=settings"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "⬅ Back to Home",
+                                    "font_size": 18,
+                                    "font_weight": "medium",
+                                    "text_color": "#007bff",
+                                    "text_alignment_horizontal": "center",
+                                    "background": [
+                                        {
+                                            "type": "solid",
+                                            "color": "#ffffff"
+                                        }
+                                    ],
+                                    "border": {
+                                        "corner_radius": 8,
+                                        "stroke": {
+                                            "color": "#007bff",
+                                            "width": 2
+                                        }
+                                    },
+                                    "paddings": {
+                                        "top": 15,
+                                        "bottom": 15,
+                                        "left": 30,
+                                        "right": 30
+                                    },
+                                    "actions": [
+                                        {
+                                            "log_id": "nav_home",
+                                            "url": "app://navigate?page=home"
+                                        }
+                                    ]
                                 }
                             ]
                         }
