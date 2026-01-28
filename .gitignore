@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# lock files (keep if your team uses them!)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+dist/
+build/
+fullcode/
+.vscode/
+.idea/
