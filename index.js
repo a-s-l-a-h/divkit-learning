@@ -5,45 +5,82 @@ import {
     createGlobalVariablesController 
 } from '@divkitframework/divkit/dist/client';
 
-import homeData from './pages/home.json';
-import profileData from './pages/profile.json';
-import settingsData from './pages/settings.json';
-import variablesData from './pages/variables.json';
-
-const pages = {
-    home: homeData,
-    profile: profileData,
-    settings: settingsData
-};
+// In-memory cache for pages
+const pagesCache = new Map();
+let variablesData = {};
 
 // THE OFFICIAL DIVKIT WAY: Create global variables controller
 const globalController = createGlobalVariablesController();
 
-// Create variables from variables.json and add to controller
-Object.entries(variablesData).forEach(([name, value]) => {
-    const variable = createVariable(name, 'string', value);
-    globalController.setVariable(variable);
-});
+/**
+ * Fetch all pages and variables at once
+ */
+async function fetchAllData() {
+    try {
+        console.log('📥 Fetching all pages...');
 
+        // Fetch all pages in parallel
+        const [homeRes, profileRes, settingsRes, varsRes] = await Promise.all([
+            fetch('/pages/home.json'),
+            fetch('/pages/profile.json'),
+            fetch('/pages/settings.json'),
+            fetch('/pages/variables.json')
+        ]);
+
+        // Parse JSON
+        const [home, profile, settings, vars] = await Promise.all([
+            homeRes.json(),
+            profileRes.json(),
+            settingsRes.json(),
+            varsRes.json()
+        ]);
+
+        // Store in memory cache (Map)
+        pagesCache.set('home', home);
+        pagesCache.set('profile', profile);
+        pagesCache.set('settings', settings);
+        variablesData = vars;
+
+        console.log(`✅ Loaded ${pagesCache.size} pages into memory`);
+
+        // Initialize global variables
+        Object.entries(variablesData).forEach(([name, value]) => {
+            const variable = createVariable(name, 'string', value);
+            globalController.setVariable(variable);
+        });
+
+        console.log(`✅ Initialized ${Object.keys(variablesData).length} variables`);
+
+        return true;
+    } catch (error) {
+        console.error('❌ Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+/**
+ * Load and render a page from memory cache
+ */
 function loadPage(pageName) {
-    const jsonToRender = pages[pageName];
+    const jsonToRender = pagesCache.get(pageName);
 
     if (!jsonToRender) {
-        console.error("Page not found:", pageName);
+        console.error("Page not found in cache:", pageName);
         return;
     }
+
+    console.log(`📄 Rendering page: ${pageName} (from memory)`);
 
     // Clear container
     const container = document.getElementById('app');
     container.innerHTML = '';
 
     // Render with global variables controller
-    // ALL pages can now access the same variables!
     render({
         id: 'divkit-root',
         target: container,
         json: jsonToRender,
-        globalVariablesController: globalController,  // ← OFFICIAL DIVKIT WAY!
+        globalVariablesController: globalController,
         
         onCustomAction: (action) => {
             try {
@@ -69,7 +106,6 @@ function updateGlobalVariable(name, value) {
     if (variable) {
         variable.setValue(value);
         console.log(`✅ Updated ${name} to:`, value);
-        // All pages automatically see the new value!
     }
 }
 
@@ -135,14 +171,51 @@ window.fetchAndUpdateUserData = fetchAndUpdateUserData;
 window.toggleDarkMode = toggleDarkMode;
 window.toggleNotifications = toggleNotifications;
 window.globalController = globalController;
+window.loadPage = loadPage;
 
-// Start
-loadPage('home');
-
-// Demo: Auto-update after 2 seconds
-setTimeout(() => {
-    console.log('🔄 Updating user name...');
-    updateUserName('Jane Smith');
-    console.log('✅ Check: name changed on current page!');
-    console.log('✅ Navigate to another page - same name will show!');
-}, 2000);
+// ===== INITIALIZE APP =====
+(async () => {
+    try {
+        console.log('🚀 Starting app...');
+        
+        // Fetch all data at once
+        await fetchAllData();
+        
+        // Load home page from memory
+        loadPage('home');
+        
+        console.log('✅ App ready!');
+        
+        // Demo: Auto-update after 2 seconds
+        setTimeout(() => {
+            console.log('🔄 Updating user name...');
+            updateUserName('Jane Smith');
+            console.log('✅ Check: name changed on current page!');
+            console.log('✅ Navigate to another page - same name will show!');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ App failed to start:', error);
+        
+        // Show error to user
+        const container = document.getElementById('app');
+        container.innerHTML = `
+            <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+                <h2 style="color: #e74c3c;">⚠️ Failed to Load</h2>
+                <p>Unable to load application data.</p>
+                <p style="color: #7f8c8d; font-size: 14px;">${error.message}</p>
+                <button onclick="location.reload()" style="
+                    padding: 10px 20px;
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                ">
+                    Retry
+                </button>
+            </div>
+        `;
+    }
+})();
